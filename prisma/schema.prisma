@@ -1,0 +1,259 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum RoomStatus {
+  ACTIVE
+  ENDED
+  ARCHIVED
+}
+
+enum ParticipantRole {
+  HOST
+  GUEST
+}
+
+enum QueueItemSource {
+  ALGORITHM
+  MANUAL
+}
+
+enum QueueItemStatus {
+  QUEUED
+  PLAYING
+  PLAYED
+  SKIPPED
+  REMOVED
+}
+
+enum VoteType {
+  SKIP
+}
+
+enum TrackSignalSource {
+  TOP_TRACK
+  RECENT_TRACK
+  SAVED_TRACK
+}
+
+enum ArtistSignalSource {
+  TOP_ARTIST
+}
+
+enum SyncSource {
+  TOP_TRACKS
+  TOP_ARTISTS
+  RECENTLY_PLAYED
+  SAVED_TRACKS
+}
+
+enum SyncStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+model User {
+  id                   String             @id @default(cuid())
+  spotifyUserId        String             @unique
+  displayName          String?
+  imageUrl             String?
+  spotifyProfileUrl    String?
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+  spotifyAccount       SpotifyAccount?
+  roomsHosted          Room[]             @relation("HostedRooms")
+  roomParticipants     RoomParticipant[]
+  addedQueueItems      QueueItem[]        @relation("QueueItemAddedByUser")
+  trackSignals         UserTrackSignal[]
+  artistSignals        UserArtistSignal[]
+  syncStates           SpotifySyncState[]
+  queueVotes           QueueVote[]
+  createdPlaylistExports PlaylistExport[] @relation("PlaylistCreatedByUser")
+}
+
+model SpotifyAccount {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  accessToken  String
+  refreshToken String
+  scope        String?
+  expiresAt    DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Room {
+  id              String            @id @default(cuid())
+  code            String            @unique
+  name            String?
+  hostId          String
+  prompt          String?
+  status          RoomStatus        @default(ACTIVE)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  endedAt         DateTime?
+  host            User              @relation("HostedRooms", fields: [hostId], references: [id], onDelete: Restrict)
+  participants    RoomParticipant[]
+  queueItems      QueueItem[]
+  queueVotes      QueueVote[]
+  playlistExports PlaylistExport[]
+}
+
+model RoomParticipant {
+  id        String          @id @default(cuid())
+  roomId     String
+  userId     String
+  role       ParticipantRole @default(GUEST)
+  joinedAt   DateTime        @default(now())
+  leftAt     DateTime?
+  isActive   Boolean         @default(true)
+  room       Room            @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([roomId, userId])
+  @@index([roomId, isActive])
+}
+
+model Track {
+  id             String            @id @default(cuid())
+  spotifyTrackId String            @unique
+  name           String
+  durationMs     Int?
+  explicit       Boolean?
+  isPlayable     Boolean?
+  previewUrl     String?
+  albumName      String?
+  albumImageUrl  String?
+  spotifyUri     String?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  artists        TrackArtist[]
+  queueItems     QueueItem[]
+  userSignals    UserTrackSignal[]
+}
+
+model Artist {
+  id              String            @id @default(cuid())
+  spotifyArtistId String            @unique
+  name            String
+  imageUrl        String?
+  spotifyUri      String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  tracks          TrackArtist[]
+  userSignals     UserArtistSignal[]
+}
+
+model TrackArtist {
+  trackId  String
+  artistId String
+  position Int?
+  track    Track  @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  artist   Artist @relation(fields: [artistId], references: [id], onDelete: Cascade)
+
+  @@id([trackId, artistId])
+  @@index([artistId])
+}
+
+model UserTrackSignal {
+  id         String            @id @default(cuid())
+  userId     String
+  trackId    String
+  source     TrackSignalSource
+  rank       Int?
+  weight     Float?
+  observedAt DateTime?
+  createdAt  DateTime          @default(now())
+  user       User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  track      Track             @relation(fields: [trackId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, trackId, source])
+  @@index([userId, source])
+}
+
+model UserArtistSignal {
+  id         String            @id @default(cuid())
+  userId     String
+  artistId   String
+  source     ArtistSignalSource
+  rank       Int?
+  weight     Float?
+  observedAt DateTime?
+  createdAt  DateTime          @default(now())
+  user       User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  artist     Artist            @relation(fields: [artistId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, artistId, source])
+  @@index([userId, source])
+}
+
+model SpotifySyncState {
+  id          String     @id @default(cuid())
+  userId      String
+  source      SyncSource
+  status      SyncStatus @default(PENDING)
+  lastSyncedAt DateTime?
+  lastError   String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, source])
+}
+
+model QueueItem {
+  id            String          @id @default(cuid())
+  roomId         String
+  trackId        String
+  addedByUserId  String?
+  source         QueueItemSource @default(ALGORITHM)
+  status         QueueItemStatus @default(QUEUED)
+  position       Int
+  isProtected    Boolean         @default(false)
+  score          Float?
+  explanation    Json?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  playedAt       DateTime?
+  room           Room            @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  track          Track           @relation(fields: [trackId], references: [id], onDelete: Restrict)
+  addedByUser    User?           @relation("QueueItemAddedByUser", fields: [addedByUserId], references: [id], onDelete: SetNull)
+  votes          QueueVote[]
+
+  @@unique([roomId, position])
+  @@index([roomId, status, position])
+}
+
+model QueueVote {
+  id          String   @id @default(cuid())
+  roomId       String
+  queueItemId  String
+  userId       String
+  type         VoteType @default(SKIP)
+  createdAt    DateTime @default(now())
+  room         Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  queueItem    QueueItem @relation(fields: [queueItemId], references: [id], onDelete: Cascade)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([queueItemId, userId, type])
+  @@index([roomId, type, createdAt])
+}
+
+model PlaylistExport {
+  id                String   @id @default(cuid())
+  roomId             String
+  createdByUserId    String
+  name               String
+  description        String?
+  spotifyPlaylistId  String?  @unique
+  spotifyPlaylistUrl String?
+  createdAt          DateTime @default(now())
+  room               Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  createdByUser      User     @relation("PlaylistCreatedByUser", fields: [createdByUserId], references: [id], onDelete: Cascade)
+}

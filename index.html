@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jammix</title>
+    <meta
+      name="description"
+      content="Jammix is a social queue companion for Spotify that builds a live room mix from everyone's taste."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <a class="brand" href="#top">Jammix</a>
+        <nav class="site-nav">
+          <a href="#concept">Concept</a>
+          <a href="#mvp">MVP</a>
+          <a href="#roadmap">Roadmap</a>
+          <a href="https://github.com/junga3/jammix" target="_blank" rel="noreferrer">GitHub</a>
+        </nav>
+      </header>
+
+      <main id="top">
+        <section class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow">Social Queue Companion For Spotify</p>
+            <h1>Music that actually fits the room.</h1>
+            <p class="lede">
+              Jammix builds a live group queue from everyone's listening habits,
+              keeps it adaptive as people join, and gives the room fair control
+              without turning the queue into chaos.
+            </p>
+            <div class="hero-actions">
+              <a class="button button-primary" href="https://github.com/junga3/jammix#readme" target="_blank" rel="noreferrer">Read the Plan</a>
+              <a class="button button-secondary" href="https://github.com/junga3/jammix" target="_blank" rel="noreferrer">View Repo</a>
+            </div>
+          </div>
+
+          <div class="hero-panel">
+            <div class="room-card">
+              <div class="room-head">
+                <span class="room-badge">Room A3F9</span>
+                <span class="room-prompt">Prompt: party pop, no country</span>
+              </div>
+              <div class="now-playing">
+                <div class="cover glow-a"></div>
+                <div>
+                  <p class="label">Now playing</p>
+                  <h2>Shared Favorite Energy</h2>
+                  <p>Picked from overlap across 4 listeners</p>
+                </div>
+              </div>
+              <ul class="queue-list">
+                <li>
+                  <span>01</span>
+                  <div>
+                    <strong>High-affinity track</strong>
+                    <p>Fits the prompt and matches 3 users</p>
+                  </div>
+                </li>
+                <li>
+                  <span>02</span>
+                  <div>
+                    <strong>Manual add</strong>
+                    <p>Protected from recalculation</p>
+                  </div>
+                </li>
+                <li>
+                  <span>03</span>
+                  <div>
+                    <strong>Discovery pick</strong>
+                    <p>Represents a smaller group without breaking the vibe</p>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="section-grid" id="concept">
+          <article class="card statement">
+            <p class="eyebrow">The Problem</p>
+            <h2>Most group music is either dominated, chaotic, or boring.</h2>
+            <p>
+              One person controls the speaker, everyone dumps songs into the queue,
+              or the group settles for a playlist that does not really match who is
+              there. Jammix is built to solve the next-song decision.
+            </p>
+          </article>
+
+          <article class="card">
+            <p class="eyebrow">How It Works</p>
+            <ol class="step-list">
+              <li>Host creates a room.</li>
+              <li>Guests join with Spotify.</li>
+              <li>Jammix reads shared taste signals.</li>
+              <li>The queue updates as the room changes.</li>
+              <li>The host can guide the vibe and the room can vote.</li>
+            </ol>
+          </article>
+        </section>
+
+        <section class="features">
+          <div class="section-heading">
+            <p class="eyebrow">Core Features</p>
+            <h2>Designed around the room, not just the queue.</h2>
+          </div>
+          <div class="feature-grid">
+            <article class="card">
+              <h3>Adaptive queue</h3>
+              <p>Builds a live mix from top tracks, artists, recent plays, and saved songs.</p>
+            </article>
+            <article class="card">
+              <h3>Fair group control</h3>
+              <p>Majority skip voting and protected manual adds keep the session social.</p>
+            </article>
+            <article class="card">
+              <h3>Prompt steering</h3>
+              <p>The host can nudge the room toward a vibe without turning recommendations rigid.</p>
+            </article>
+            <article class="card">
+              <h3>Spotify export</h3>
+              <p>The final session can be saved as a Spotify playlist in room order.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="mvp-strip" id="mvp">
+          <div class="section-heading">
+            <p class="eyebrow">MVP</p>
+            <h2>The first version focuses on one strong loop.</h2>
+          </div>
+          <div class="pill-row">
+            <span>Room creation</span>
+            <span>Spotify login</span>
+            <span>Live queue generation</span>
+            <span>Prompt input</span>
+            <span>Majority skip</span>
+            <span>Protected manual adds</span>
+            <span>Playlist export</span>
+          </div>
+        </section>
+
+        <section class="roadmap" id="roadmap">
+          <div class="section-heading">
+            <p class="eyebrow">Roadmap</p>
+            <h2>Current focus: get the build foundation in place.</h2>
+          </div>
+          <div class="timeline">
+            <article class="card active">
+              <span class="phase-tag">Phase 0</span>
+              <h3>Setup</h3>
+              <p>Scope, env, schema, Spotify app setup, and project workflow.</p>
+            </article>
+            <article class="card">
+              <span class="phase-tag">Phase 1</span>
+              <h3>App shell</h3>
+              <p>Next.js frontend, NestJS backend, Tailwind, and core routes.</p>
+            </article>
+            <article class="card">
+              <span class="phase-tag">Phase 2+</span>
+              <h3>Core product loop</h3>
+              <p>Auth, rooms, realtime sync, queue engine, playback integration, and export.</p>
+            </article>
+          </div>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <p>Jammix is an independent companion app concept for Spotify.</p>
+        <a href="https://github.com/junga3/jammix" target="_blank" rel="noreferrer">github.com/junga3/jammix</a>
+      </footer>
+    </div>
+  </body>
+</html>
