@@ -134,10 +134,9 @@ Current repo state:
 
 ### Immediate Phase 0 Work
 
-- Create the Spotify Developer app
-- Add local and production callback URLs
-- Copy credentials into local `.env`
-- Create the GitHub board and labels
+- Confirm the local Spotify callback stays set to `http://127.0.0.1:4000/auth/spotify/callback`
+- Rotate any secrets that were ever exposed outside your machine
+- Optionally create a GitHub Project board if you want a visual workflow board
 - Start Phase 1 app scaffolding
 
 ### Phase 0 Notes
@@ -146,6 +145,7 @@ Current repo state:
 - Consolidated the planning and product notes into this single `README.md`.
 - Removed the extra roadmap and whitepaper documents to keep the repo simpler.
 - Kept the environment and Prisma setup files needed for development handoff.
+- Created the Phase 1 starter labels and issues on GitHub.
 
 ## Technical Direction
 
@@ -169,8 +169,8 @@ Current repo state:
 
 ### Local Assumptions
 
-- Frontend runs on `http://localhost:3000`
-- Backend runs on `http://localhost:4000`
+- Frontend runs on `http://127.0.0.1:3000`
+- Backend runs on `http://127.0.0.1:4000`
 - Spotify callback hits the backend
 - Redis and Postgres can run locally or be replaced with hosted dev instances
 
@@ -180,7 +180,7 @@ Create a Spotify Developer app with:
 
 - App name: `Jammix`
 - Public description: `A social queue companion for Spotify`
-- Local callback: `http://localhost:4000/auth/spotify/callback`
+- Local callback: `http://127.0.0.1:4000/auth/spotify/callback`
 - Production callback: `https://api.jammix.app/auth/spotify/callback`
 
 Scopes planned for MVP:
@@ -200,15 +200,16 @@ Scopes planned for MVP:
 Start from [.env.example](./.env.example). The key values are:
 
 ```txt
-APP_BASE_URL=http://localhost:3000
-API_BASE_URL=http://localhost:4000
+APP_BASE_URL=http://127.0.0.1:3000
+API_BASE_URL=http://127.0.0.1:4000
 SPOTIFY_CLIENT_ID=
 SPOTIFY_CLIENT_SECRET=
-SPOTIFY_REDIRECT_URI=http://localhost:4000/auth/spotify/callback
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/jammix
-REDIS_URL=redis://localhost:6379
+SPOTIFY_REDIRECT_URI=http://127.0.0.1:4000/auth/spotify/callback
+DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/jammix
+REDIS_URL=redis://127.0.0.1:6379
 SESSION_SECRET=
 JWT_SECRET=
+POSTHOG_HOST=https://us.i.posthog.com
 ```
 
 ## Initial Data Model
